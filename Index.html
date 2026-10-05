@@ -1,0 +1,199 @@
+from pathlib import Path
+
+html = r'''<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Moonpie — A Little Universe for You 🌙</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden}
+body{
+  font-family:Georgia,"Times New Roman",serif;color:#fff;
+  background:#02030b;
+}
+.scene{position:fixed;inset:0;overflow:hidden;background:
+ radial-gradient(circle at 50% 45%,rgba(80,92,180,.18),transparent 28%),
+ radial-gradient(circle at 50% 100%,#101742 0,#05091b 42%,#010208 100%);
+}
+.stars,.stars2{position:absolute;inset:-20%;background-image:
+ radial-gradient(2px 2px at 10% 15%,#fff,transparent),
+ radial-gradient(1px 1px at 21% 63%,#fff,transparent),
+ radial-gradient(2px 2px at 33% 28%,#fff,transparent),
+ radial-gradient(1px 1px at 48% 78%,#fff,transparent),
+ radial-gradient(2px 2px at 59% 18%,#fff,transparent),
+ radial-gradient(1px 1px at 71% 55%,#fff,transparent),
+ radial-gradient(2px 2px at 83% 31%,#fff,transparent),
+ radial-gradient(1px 1px at 94% 72%,#fff,transparent),
+ radial-gradient(1px 1px at 43% 47%,#fff,transparent);
+ animation:drift 22s linear infinite}
+.stars2{transform:scale(1.5);opacity:.4;animation-duration:35s;animation-direction:reverse}
+@keyframes drift{to{transform:translate3d(4%,3%,0)}}
+
+.moon{
+ position:absolute;width:145px;height:145px;border-radius:50%;left:50%;top:15%;
+ transform:translateX(-50%);
+ background:radial-gradient(circle at 35% 30%,#fffef1,#fff4b6 65%,#e9cf8c);
+ box-shadow:0 0 35px #fff5bc,0 0 120px rgba(255,232,150,.32);
+ animation:moonFloat 6s ease-in-out infinite;
+}
+@keyframes moonFloat{50%{transform:translateX(-50%) translateY(-12px)}}
+
+.horizon{
+ position:absolute;left:-10%;right:-10%;bottom:-25%;height:50%;
+ background:linear-gradient(to top,#02030b 15%,rgba(3,7,23,.85),transparent);
+ border-radius:50% 50% 0 0/25% 25% 0 0;
+}
+.city{
+ position:absolute;bottom:0;left:0;right:0;height:19%;
+ background:
+ linear-gradient(to top,#010208 0 65%,transparent 65%),
+ repeating-linear-gradient(90deg,transparent 0 23px,#070b22 23px 28px,transparent 28px 50px);
+ opacity:.8;
+}
+.city:after{content:"";position:absolute;inset:20% 0 0;background:
+ repeating-linear-gradient(90deg,transparent 0 42px,rgba(255,230,150,.12) 42px 44px,transparent 44px 75px)}
+
+.vignette{position:absolute;inset:0;background:radial-gradient(circle,transparent 30%,rgba(0,0,0,.65) 100%);pointer-events:none}
+
+.overlay{
+ position:relative;z-index:5;width:100%;height:100%;display:grid;place-items:center;
+ padding:24px;text-align:center;
+}
+.panel{width:min(92vw,650px)}
+.kicker{font-size:13px;letter-spacing:5px;text-transform:uppercase;opacity:.65;margin-bottom:20px}
+.title{
+ margin:0;font-size:clamp(50px,15vw,100px);line-height:.9;
+ color:#fff6c5;text-shadow:0 0 30px rgba(255,234,153,.55);
+}
+.subtitle{font-size:clamp(18px,4.5vw,25px);opacity:.86;margin:25px auto 34px;line-height:1.5}
+.reveal{animation:cinema 2.2s cubic-bezier(.2,.8,.2,1) both}
+.delay1{animation-delay:.6s}.delay2{animation-delay:1.2s}
+@keyframes cinema{
+ from{opacity:0;transform:translateY(28px);filter:blur(8px)}
+ to{opacity:1;transform:none;filter:blur(0)}
+}
+button{
+ border:1px solid rgba(255,245,190,.55);border-radius:999px;
+ padding:15px 28px;background:rgba(255,235,180,.1);color:#fff8da;
+ font-size:16px;cursor:pointer;backdrop-filter:blur(8px);
+ box-shadow:0 0 35px rgba(255,235,180,.12);transition:.3s;
+}
+button:hover{background:rgba(255,235,180,.2);transform:translateY(-2px);box-shadow:0 0 45px rgba(255,235,180,.25)}
+#story{display:none}
+#story.show{display:block;animation:cinema 1.4s ease both}
+.letter{
+ padding:30px 25px;border:1px solid rgba(255,255,255,.16);
+ border-radius:28px;background:rgba(4,7,25,.62);backdrop-filter:blur(13px);
+ box-shadow:0 25px 100px rgba(0,0,0,.5);
+}
+.letter h2{color:#fff0b0;font-size:clamp(28px,8vw,45px);margin:0 0 18px}
+.message{font-size:18px;line-height:1.8;opacity:.92}
+.pink{color:#ffd5e7}.gold{color:#fff0ae}
+#final{display:none}
+#final.show{display:block;animation:cinema 1.5s ease both}
+.finalHeart{font-size:80px;animation:pulse 1.2s infinite}
+@keyframes pulse{50%{transform:scale(1.15)}}
+.finalTitle{font-size:clamp(44px,12vw,78px);margin:8px 0;color:#fff0ae;text-shadow:0 0 25px rgba(255,230,150,.5)}
+.small{opacity:.58;font-size:13px;margin-top:22px}
+.floating{position:fixed;z-index:4;bottom:-30px;pointer-events:none;animation:rise linear forwards}
+@keyframes rise{to{transform:translateY(-115vh) translateX(var(--x)) rotate(360deg);opacity:0}}
+.progress{position:fixed;z-index:8;left:0;top:0;height:2px;width:0;background:#fff0ae;box-shadow:0 0 12px #fff0ae;transition:width .4s}
+</style>
+</head>
+<body>
+<div class="scene">
+ <div class="stars"></div><div class="stars2"></div>
+ <div class="moon"></div><div class="horizon"></div><div class="city"></div><div class="vignette"></div>
+</div>
+<div class="progress" id="progress"></div>
+
+<div class="overlay">
+ <main class="panel">
+   <section id="opening">
+    <div class="kicker reveal">A message from somewhere between the stars</div>
+    <h1 class="title reveal delay1">Moonpie 🌙</h1>
+    <p class="subtitle reveal delay2">Tonight, I made a tiny universe<br>just to tell you something.</p>
+    <button class="reveal delay2" id="begin">Enter the night sky ✨</button>
+   </section>
+
+   <section id="story">
+    <div class="letter">
+      <div class="kicker">For Akshara</div>
+      <h2>Look at the moon for a second. 🌙</h2>
+      <p class="message">
+       Every star up there is beautiful, but somehow my eyes still look for the moon.
+       <br><br>
+       And that's what you remind me of, <span class="pink">Moonpie</span> —
+       something that makes even an ordinary night feel a little more magical.
+       <br><br>
+       I don't need a thousand words to explain it.
+       I just wanted you to know that <span class="gold">I love you. ❤️</span>
+      </p>
+      <button id="next">There is one last thing... →</button>
+    </div>
+   </section>
+
+   <section id="final">
+    <div class="finalHeart">💖</div>
+    <div class="kicker">My favorite person</div>
+    <h2 class="finalTitle">I Love You,<br>Moonpie.</h2>
+    <p class="message">
+      If this little universe could hold one wish,<br>
+      it would be to keep making beautiful memories with you. ✨
+    </p>
+    <div class="small">Made especially for Akshara 🌙</div>
+   </section>
+ </main>
+</div>
+
+<audio id="music" loop>
+ <source src="love-song.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+const opening=document.getElementById("opening");
+const story=document.getElementById("story");
+const final=document.getElementById("final");
+const begin=document.getElementById("begin");
+const next=document.getElementById("next");
+const music=document.getElementById("music");
+const progress=document.getElementById("progress");
+
+function heart(){
+ const h=document.createElement("div");
+ h.className="floating";
+ h.textContent=["♡","💗","💖","✨","🌙"][Math.floor(Math.random()*5)];
+ h.style.left=Math.random()*100+"vw";
+ h.style.fontSize=(13+Math.random()*20)+"px";
+ h.style.setProperty("--x",(Math.random()*180-90)+"px");
+ h.style.animationDuration=(5+Math.random()*5)+"s";
+ document.body.appendChild(h);
+ setTimeout(()=>h.remove(),11000);
+}
+setInterval(heart,850);
+
+function play(){music.play().catch(()=>{})}
+
+begin.onclick=()=>{
+ play();
+ opening.style.display="none";
+ story.classList.add("show");
+ progress.style.width="50%";
+};
+
+next.onclick=()=>{
+ story.style.display="none";
+ final.classList.add("show");
+ progress.style.width="100%";
+ for(let i=0;i<25;i++) setTimeout(heart,i*70);
+};
+</script>
+</body>
+</html>
+'''
+
+path = Path("/mnt/data/moonpie_love_website_v2.html")
+path.write_text(html, encoding="utf-8")
+print(path)
