@@ -1,0 +1,286 @@
+from pathlib import Path
+
+# Recreate the complete V4 file from the design above.
+# (The HTML is kept self-contained: no photos, audio files, fonts, or external libraries.)
+html = r'''<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>For My Moonpie 🌙</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden}
+body{font-family:Georgia,"Times New Roman",serif;color:#fff;background:#030414}
+#space{position:fixed;inset:0;overflow:hidden;background:radial-gradient(circle at 50% 15%,#171449 0%,#090925 34%,#030414 75%)}
+.star{position:absolute;width:2px;height:2px;border-radius:50%;background:#fff;opacity:.5;animation:twinkle var(--d) infinite alternate ease-in-out}
+@keyframes twinkle{to{opacity:.12;transform:scale(.5)}}
+.nebula{position:absolute;border-radius:50%;filter:blur(35px);opacity:.16;pointer-events:none}
+.n1{width:55vw;height:35vw;left:-15vw;top:15vh;background:#7b61ff}
+.n2{width:50vw;height:45vw;right:-20vw;bottom:8vh;background:#ff4fa3}
+.n3{width:35vw;height:30vw;left:35vw;top:42vh;background:#35b9ff}
+#progress{position:fixed;z-index:20;top:0;left:0;height:3px;width:0;background:linear-gradient(90deg,#8e7dff,#ff86c8,#fff);box-shadow:0 0 14px #ff9bd3}
+.scene{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:28px 20px;opacity:0;visibility:hidden;transform:scale(1.035);transition:opacity .9s ease,transform .9s ease,visibility .9s;text-align:center;z-index:5}
+.scene.active{opacity:1;visibility:visible;transform:scale(1)}
+.content{width:min(700px,100%);position:relative;z-index:3}
+.kicker{font-size:.72rem;letter-spacing:.35em;text-transform:uppercase;color:#bcb6ff;margin-bottom:18px}
+h1{font-size:clamp(2.4rem,10vw,5.8rem);line-height:.95;margin-bottom:20px;text-shadow:0 0 28px rgba(170,150,255,.5)}
+h2{font-size:clamp(1.8rem,7vw,3.7rem);line-height:1.05;margin-bottom:18px}
+p{font-size:clamp(1rem,4vw,1.25rem);line-height:1.7;color:#e7e5f5}
+.sub{color:#aaa8c5!important;font-size:.92rem;margin-top:14px}
+button{border:1px solid rgba(255,255,255,.3);color:white;background:rgba(255,255,255,.09);backdrop-filter:blur(12px);padding:14px 24px;border-radius:999px;font:inherit;font-size:1rem;cursor:pointer;margin-top:28px;transition:.25s;box-shadow:0 8px 35px rgba(0,0,0,.25)}
+button:hover{transform:translateY(-3px);background:rgba(255,255,255,.16)}
+.primary{background:linear-gradient(135deg,rgba(137,113,255,.55),rgba(255,99,175,.45));border-color:rgba(255,255,255,.45)}
+.moon{width:min(52vw,260px);height:min(52vw,260px);border-radius:50%;margin:0 auto 28px;background:radial-gradient(circle at 35% 30%,#fff,#e9e9f7 42%,#aaa9c9 75%,#686784);box-shadow:0 0 35px #fff,0 0 100px rgba(160,150,255,.55);animation:float 5s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-13px)}}
+.orbit{position:absolute;width:min(80vw,420px);height:min(80vw,420px);border:1px solid rgba(255,255,255,.12);border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%);animation:spin 20s linear infinite}
+.orbit:after{content:"✦";position:absolute;top:-9px;left:50%;color:#fff}
+@keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:22px}
+.card{padding:17px 13px;border:1px solid rgba(255,255,255,.12);border-radius:20px;background:rgba(255,255,255,.055);backdrop-filter:blur(8px)}
+.card b{display:block;font-size:1.35rem;margin-bottom:6px}
+.card span{font-size:.82rem;color:#bdbbd0;line-height:1.4}
+.letter{text-align:left;padding:24px;border:1px solid rgba(255,255,255,.13);border-radius:25px;background:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.025));box-shadow:0 20px 80px rgba(0,0,0,.3)}
+.letter p{font-size:1rem;margin:11px 0}
+.constellation{position:relative;height:250px;margin:8px auto 10px;max-width:500px}
+.constellation span{position:absolute;font-size:1.05rem;color:#fff;text-shadow:0 0 12px #bdb6ff}
+.line{position:absolute;height:1px;background:linear-gradient(90deg,transparent,#bcb5ff,transparent);transform-origin:left center;opacity:.7}
+.bigheart{font-size:clamp(4rem,18vw,9rem);animation:heartbeat 1.4s infinite;text-shadow:0 0 35px #ff72b6}
+@keyframes heartbeat{50%{transform:scale(1.12)}}
+.choice-wrap{position:relative;height:105px;margin-top:10px}
+.choice{position:absolute;margin:0;top:25px}
+#yes{left:50%;transform:translateX(-110%)}
+#no{left:50%;transform:translateX(10%)}
+#yes:hover{transform:translateX(-110%) translateY(-3px)}
+#no:hover{transform:translateX(10%) translateY(-3px)}
+.celebrate{font-size:clamp(2rem,8vw,4rem);color:#ffd7ee;text-shadow:0 0 30px #ff55a7}
+.hint{margin-top:12px;color:#8886a3;font-size:.78rem}
+.floatHeart{position:fixed;bottom:-40px;z-index:30;pointer-events:none;animation:rise linear forwards}
+@keyframes rise{to{transform:translateY(-110vh) rotate(25deg);opacity:0}}
+.shooting{position:fixed;width:100px;height:1px;background:linear-gradient(90deg,#fff,transparent);transform:rotate(-30deg);z-index:1;animation:shoot 1.2s linear forwards}
+@keyframes shoot{from{left:110%;top:10%;opacity:1}to{left:-20%;top:60%;opacity:0}}
+@media(max-width:420px){.cards{gap:8px}.card{padding:13px 8px}.letter{padding:18px}.choice-wrap{height:125px}}
+</style>
+</head>
+<body>
+<div id="space"><div class="nebula n1"></div><div class="nebula n2"></div><div class="nebula n3"></div></div>
+<div id="progress"></div>
+
+<section class="scene active">
+<div class="content">
+<div class="moon"></div>
+<div class="kicker">A little universe, made for one person</div>
+<h1>For my<br><span style="color:#d5ccff">Moonpie</span> 🌙</h1>
+<p>Akshara, tonight I want to take you somewhere a little different.</p>
+<button class="primary next">Enter the universe ✨</button>
+</div>
+</section>
+
+<section class="scene">
+<div class="content">
+<div class="kicker">Chapter I · The journey</div>
+<h2>Close your eyes for a second…</h2>
+<p>Imagine leaving Earth behind. Past the clouds. Past the noise. Past every ordinary day.</p>
+<p class="sub">Until there is nothing left but stars.</p>
+<button class="next">Keep going →</button>
+</div>
+</section>
+
+<section class="scene">
+<div class="content">
+<div class="orbit"></div>
+<div class="kicker">Chapter II · Somewhere in the stars</div>
+<h2>There are billions of stars.</h2>
+<p>Countless galaxies. Countless stories. Countless people.</p>
+<p style="margin-top:14px;color:#fff">And somehow, in all that enormous universe…<br><b>my favorite person is you.</b></p>
+<button class="next">I want to see more 🌌</button>
+</div>
+</section>
+
+<section class="scene">
+<div class="content">
+<div class="kicker">Chapter III · Your constellation</div>
+<h2>Even the stars know your name.</h2>
+<div class="constellation" id="constellation"></div>
+<p>★ A K S H A R A ★</p>
+<p class="sub">So I made a constellation just for you.</p>
+<button class="next">Open your letter 💌</button>
+</div>
+</section>
+
+<section class="scene">
+<div class="content">
+<div class="kicker">Chapter IV · A letter</div>
+<div class="letter">
+<p>Akshara,</p>
+<p>I don't know exactly when you became such an important part of my world.</p>
+<p>Maybe it happened in a small conversation. Maybe in a random laugh. Maybe in one of those ordinary moments that somehow became special.</p>
+<p>But somewhere along the way, <b>you became my Moonpie.</b></p>
+<p>If life were a night sky, I'd want to keep finding you in it — again and again.</p>
+<p>And if I could keep one beautiful feeling from all the chaos of the universe, I'd choose the feeling of having you in my life.</p>
+<p>So this little website is my tiny way of saying something simple:</p>
+<p style="font-size:1.25rem;color:#fff"><b>I really, really like having you in my universe. 🌙</b></p>
+</div>
+<button class="next">There is more… ✨</button>
+</div>
+</section>
+
+<section class="scene">
+<div class="content">
+<div class="kicker">Chapter V · Things I want you to know</div>
+<h2>My favorite things about you</h2>
+<div class="cards">
+<div class="card"><b>🌙</b><span>You make ordinary moments feel a little more special.</span></div>
+<div class="card"><b>✨</b><span>You have a way of making my world feel brighter.</span></div>
+<div class="card"><b>💫</b><span>Somehow, talking to you never feels ordinary.</span></div>
+<div class="card"><b>🫶</b><span>You became someone I genuinely want around.</span></div>
+</div>
+<button class="next">One more chapter →</button>
+</div>
+</section>
+
+<section class="scene">
+<div class="content">
+<div class="kicker">Chapter VI · Our little universe</div>
+<h2>Not a perfect story.</h2>
+<p>Not a movie. Not a fairy tale.</p>
+<p style="margin-top:15px">Just two people, making memories one moment at a time.</p>
+<div style="margin:28px 0;font-size:2rem;letter-spacing:.4em">🌙 ✦ 💗 ✦ ⭐</div>
+<p class="sub">And honestly… that's the kind of story I'd rather have.</p>
+<button class="next">Take me to the Moon 🌙</button>
+</div>
+</section>
+
+<section class="scene">
+<div class="content">
+<div class="moon" id="clickMoon" style="cursor:pointer"></div>
+<div class="kicker">A secret from the Moon</div>
+<h2 id="secretTitle">Tap the Moon 🌙</h2>
+<p id="secretText">There might be a little message hiding inside.</p>
+<button class="next">I found the secret 💫</button>
+</div>
+</section>
+
+<section class="scene">
+<div class="content">
+<div class="kicker">The final chapter</div>
+<div class="bigheart">♡</div>
+<h2>Akshara…</h2>
+<p>We've travelled through stars, crossed the universe, and reached the Moon.</p>
+<p style="margin-top:15px;color:#fff">But there is one question I've been saving for the end.</p>
+<button class="next primary">Ask me the question 💗</button>
+</div>
+</section>
+
+<section class="scene" id="finalChoice">
+<div class="content">
+<div class="kicker">From my little universe to yours</div>
+<h2>Will you be mine? 🌙</h2>
+<p>Not just for one night under the stars…<br>but for the beautiful moments still waiting ahead?</p>
+<div class="choice-wrap">
+<button class="choice primary" id="yes">YES 💗</button>
+<button class="choice" id="no">NO 🙈</button>
+</div>
+<p class="hint" id="noHint">Choose carefully, Moonpie 😌</p>
+</div>
+</section>
+
+<section class="scene" id="yesScene">
+<div class="content">
+<div class="bigheart">♥</div>
+<div class="kicker">The universe heard you</div>
+<div class="celebrate">YOU SAID YES! ✨</div>
+<p style="margin-top:20px">You just made my little universe a whole lot brighter.</p>
+<p style="margin-top:12px;color:#fff"><b>Welcome to our next chapter, Moonpie. 🌙💗</b></p>
+<button id="again">Replay our universe ↺</button>
+</div>
+</section>
+
+<script>
+const scenes=[...document.querySelectorAll('.scene')];
+let current=0;
+const progress=document.getElementById('progress');
+function show(i){
+scenes[current].classList.remove('active');
+current=Math.max(0,Math.min(i,scenes.length-1));
+scenes[current].classList.add('active');
+progress.style.width=((current)/(scenes.length-1)*100)+'%';
+}
+document.querySelectorAll('.next').forEach(b=>b.addEventListener('click',()=>show(current+1)));
+
+const space=document.getElementById('space');
+for(let i=0;i<190;i++){
+const s=document.createElement('i');s.className='star';
+s.style.left=Math.random()*100+'%';s.style.top=Math.random()*100+'%';
+s.style.width=s.style.height=(Math.random()*2.3+.5)+'px';
+s.style.setProperty('--d',(1.5+Math.random()*4)+'s');
+s.style.animationDelay=Math.random()*4+'s';
+space.appendChild(s);
+}
+setInterval(()=>{
+const sh=document.createElement('div');sh.className='shooting';
+document.body.appendChild(sh);setTimeout(()=>sh.remove(),1300);
+},4500);
+
+setInterval(()=>{
+if(Math.random()<.65){
+const h=document.createElement('div');h.className='floatHeart';
+h.textContent=['💗','♡','✨','💖','🌙'][Math.floor(Math.random()*5)];
+h.style.left=Math.random()*100+'%';
+h.style.fontSize=(12+Math.random()*18)+'px';
+h.style.animationDuration=(5+Math.random()*5)+'s';
+document.body.appendChild(h);setTimeout(()=>h.remove(),10000);
+}
+},700);
+
+const con=document.getElementById('constellation');
+const pts=[[12,65],[22,30],[34,56],[46,25],[58,60],[70,35],[82,68],[91,43]];
+pts.forEach((p,i)=>{
+const dot=document.createElement('span');dot.textContent='★';dot.style.left=p[0]+'%';dot.style.top=p[1]+'%';con.appendChild(dot);
+if(i>0){
+const [x1,y1]=pts[i-1],[x2,y2]=pts[i];
+const line=document.createElement('i');line.className='line';
+const dx=x2-x1,dy=y2-y1,len=Math.hypot(dx,dy);
+line.style.width=len+'%';line.style.left=x1+'%';line.style.top=y1+'%';
+line.style.transform='rotate('+Math.atan2(dy,dx)+'rad)';
+con.appendChild(line);
+}
+});
+
+document.getElementById('clickMoon').addEventListener('click',()=>{
+document.getElementById('secretTitle').textContent='You found it. 🌙';
+document.getElementById('secretText').innerHTML='<b>Here is the secret:</b><br>Out of every possible universe, I am really glad this one has you in it. 💗';
+for(let i=0;i<12;i++)setTimeout(makeHeart,i*90);
+});
+function makeHeart(){
+const h=document.createElement('div');h.className='floatHeart';h.textContent=['💗','💖','✨'][Math.floor(Math.random()*3)];
+h.style.left=(35+Math.random()*30)+'%';h.style.animationDuration=(2.5+Math.random()*2)+'s';
+document.body.appendChild(h);setTimeout(()=>h.remove(),5000);
+}
+
+const no=document.getElementById('no'),hint=document.getElementById('noHint');
+let noCount=0;
+function dodge(){
+noCount++;
+const x=Math.random()*70-35,y=Math.random()*55-25;
+no.style.left=(50+x)+'%';no.style.top=(25+y)+'px';no.style.transform='translateX(-50%)';
+const msgs=['Hmm… are you sure? 🙈','The Moon says try again 🌙','That button is getting shy 😭','Maybe give YES a chance? 💗','Okay okay… I’ll stop teasing 😌'];
+hint.textContent=msgs[Math.min(noCount-1,msgs.length-1)];
+if(noCount>=5)hint.textContent='Okay, no pressure. Your choice matters. 🌙';
+}
+no.addEventListener('mouseenter',()=>{if(noCount<5)dodge()});
+no.addEventListener('click',dodge);
+
+document.getElementById('yes').addEventListener('click',()=>{
+for(let i=0;i<35;i++)setTimeout(makeHeart,i*50);
+show(scenes.indexOf(document.getElementById('yesScene')));
+});
+document.getElementById('again').addEventListener('click',()=>show(0));
+</script>
+</body>
+</html>'''
+
+path = Path("/mnt/data/moonpie_v4_universe.html")
+path.write_text(html, encoding="utf-8")
+print(f"Created successfully: {path}")
+print(f"File size: {path.stat().st_size:,} bytes")
